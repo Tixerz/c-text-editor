@@ -20,6 +20,15 @@ void enable_raw_mode(){
   tcsetattr(STDIN_FILENO,TCSANOW,&raw);
 
 }
+void event(char* ch){
+  if(iscntrl(*ch)){
+    printf("%d\n" , *ch);}
+  else{
+    printf("%d:%s\n" , *ch ,ch);
+  }
+
+}
+
 
 int main(){
   tcgetattr(STDIN_FILENO,&original_term);
@@ -27,11 +36,7 @@ int main(){
   char c;
 	enable_raw_mode();
     while (read(STDIN_FILENO, &c, 1) == 1 && c != 'q') {
-    if (iscntrl(c)) { // checking if the pressed key is a control character or not (control characters are not printable)
-      printf("%d\n", c); //display the key ascii code if the character is a control character.
-    } else {
-      printf("%d ('%c')\n", c, c); //display the key ascii code and the printable part. 
-    }
+      event(&c); 
   }
 	return 0;
 }
