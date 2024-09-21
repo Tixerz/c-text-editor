@@ -1,3 +1,4 @@
+#include <ctype.h>
 #include <stdio.h>
 #include <unistd.h>
 #include <stdlib.h>
@@ -10,7 +11,6 @@ void disable_raw_mode(){
 
 void enable_raw_mode(){
   //once we enable it we want to disable it at the end of the program . so we register the disable function here
-  tcgetattr(STDIN_FILENO,&original_term);
   atexit(disable_raw_mode);
   
   //making another termios structure to set anything we want to it
@@ -22,8 +22,16 @@ void enable_raw_mode(){
 }
 
 int main(){
-	char n;
+  tcgetattr(STDIN_FILENO,&original_term);
+  original_term.c_lflag &= ~(ICANON);
+  char c;
 	enable_raw_mode();
-  while(read(STDIN_FILENO,&n , 1) == 1 && n!='q');
+    while (read(STDIN_FILENO, &c, 1) == 1 && c != 'q') {
+    if (iscntrl(c)) { // checking if the pressed key is a control character or not (control characters are not printable)
+      printf("%d\n", c); //display the key ascii code if the character is a control character.
+    } else {
+      printf("%d ('%c')\n", c, c); //display the key ascii code and the printable part. 
+    }
+  }
 	return 0;
 }
