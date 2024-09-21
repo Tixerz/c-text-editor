@@ -33,6 +33,9 @@ void enable_raw_mode(){
 
   //turning of all output processing (/r/n). 
   raw.c_oflag &= ~(OPOST);
+
+  raw.c_cc[VMIN] = 0;
+  raw.c_cc[VTIME] = 1;
   tcsetattr(STDIN_FILENO,TCSANOW,&raw);
 
 }
@@ -51,8 +54,10 @@ int main(){
   original_term.c_lflag &= ~(ICANON); // ill move it soon
   char c;
 	enable_raw_mode();
-    while (read(STDIN_FILENO, &c, 1) == 1 && c != 'q') {
+    while (1) {
+      read(STDIN_FILENO , &c,1);
       event(&c); //send the input to the even handler function
+      if(c=='q')break;
   }
 	return 0;
 }
