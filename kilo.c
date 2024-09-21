@@ -38,9 +38,9 @@ void enable_raw_mode(){
 }
 void event(char* ch){
   if(iscntrl(*ch)){ //check and see if the character is a control character (a control character is a nonprintable character).
-    printf("%d\n" , *ch);}
+    printf("%d\r\n" , *ch);}
   else{
-    printf("%d:%s\n" , *ch ,ch);
+    printf("%d:%s\r\n" , *ch ,ch);
   }
 
 }
