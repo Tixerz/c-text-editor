@@ -1,12 +1,24 @@
+#include <errno.h>
 #include <ctype.h>
 #include <stdio.h>
 #include <unistd.h>
 #include <stdlib.h>
 #include <termios.h>
+
 //creating a global copy of the original terminal
 struct termios original_term; 
+
+
+//error handling function
+
+void die(char* s){
+  perror(s);
+  exit(1);
+}
+
+
 void disable_raw_mode(){
-  tcsetattr(STDIN_FILENO , TCSANOW , &original_term);
+  if(tcsetattr(STDIN_FILENO , TCSANOW , &original_term)==-1)die("disable_raw_mode function failed to get the terminal attributes.");
 }
 
 void enable_raw_mode(){
@@ -15,7 +27,7 @@ void enable_raw_mode(){
   
   //making another termios structure to set anything we want to it
   struct termios raw;
-  tcgetattr(STDIN_FILENO , &raw);
+  if(tcgetattr(STDIN_FILENO , &raw)==-1)die("enable_raw_mode failed to get the terminal attributes.");
   //disable echo and canonical mode
   raw.c_lflag &= ~(ECHO|ICANON);
 
@@ -36,7 +48,7 @@ void enable_raw_mode(){
 
   raw.c_cc[VMIN] = 0;
   raw.c_cc[VTIME] = 1;
-  tcsetattr(STDIN_FILENO,TCSANOW,&raw);
+  if(tcsetattr(STDIN_FILENO,TCSANOW,&raw)==-1)die("enable_raw_mode function failed to set the terminal attributes.");
 
 }
 void event(char* ch){
@@ -47,15 +59,13 @@ void event(char* ch){
   }
 
 }
-
-
 int main(){
   tcgetattr(STDIN_FILENO,&original_term);
   original_term.c_lflag &= ~(ICANON); // ill move it soon
   char c;
 	enable_raw_mode();
     while (1) {
-      read(STDIN_FILENO , &c,1);
+      if(read(STDIN_FILENO , &c,1)==-1 && errno!=EAGAIN)die("Read");
       event(&c); //send the input to the even handler function
       if(c=='q')break;
   }
