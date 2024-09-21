@@ -16,12 +16,28 @@ void enable_raw_mode(){
   //making another termios structure to set anything we want to it
   struct termios raw;
   tcgetattr(STDIN_FILENO , &raw);
+  //disable echo and canonical mode
   raw.c_lflag &= ~(ECHO|ICANON);
+
+  //disable CTRL-Z and CTRL-C signals
+  raw.c_lflag &= ~(ISIG);
+
+  //disable ctrl-s and ctrl-q signals
+  raw.c_iflag &= ~(IXON);
+  
+  //disabling the ctrl-v signal
+  raw.c_lflag &= ~(IEXTEN);
+
+  //fix ctrl-M signal
+  raw.c_iflag &= ~(ICRNL);
+
+  //turning of all output processing (/r/n). 
+  raw.c_oflag &= ~(OPOST);
   tcsetattr(STDIN_FILENO,TCSANOW,&raw);
 
 }
 void event(char* ch){
-  if(iscntrl(*ch)){
+  if(iscntrl(*ch)){ //check and see if the character is a control character (a control character is a nonprintable character).
     printf("%d\n" , *ch);}
   else{
     printf("%d:%s\n" , *ch ,ch);
@@ -32,11 +48,11 @@ void event(char* ch){
 
 int main(){
   tcgetattr(STDIN_FILENO,&original_term);
-  original_term.c_lflag &= ~(ICANON);
+  original_term.c_lflag &= ~(ICANON); // ill move it soon
   char c;
 	enable_raw_mode();
     while (read(STDIN_FILENO, &c, 1) == 1 && c != 'q') {
-      event(&c); 
+      event(&c); //send the input to the even handler function
   }
 	return 0;
 }
