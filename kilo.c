@@ -61,15 +61,34 @@ void event(char* ch){
   }
 
 }
+//main functions
+
+char ReadKey(){
+  char c;
+  int ret;
+   while((ret=read(STDIN_FILENO , &c ,1))!=1){
+    if(ret==-1 && errno!= EAGAIN)die("Read function.");
+  } 
+  return c;
+}
+
+void ProcessKey(){
+  char c=ReadKey();
+
+  switch (c) {
+    case CTRL_KEY('q') :
+      exit(0);
+      break;
+  }
+}
 int main(){
   tcgetattr(STDIN_FILENO,&original_term);
   original_term.c_lflag &= ~(ICANON); // ill move it soon
   char c;
+  int po;
 	enable_raw_mode();
     while (1) {
-      if(read(STDIN_FILENO , &c,1)==-1 && errno!=EAGAIN)die("Read");
-      event(&c); //send the input to the even handler function
-      if(c== CTRL_KEY('q'))break; //or we can just check and see if the acsii value of it is equal to 17 or not . but its cooler way.
+    ProcessKey(); 
   }
 	return 0;
 }
