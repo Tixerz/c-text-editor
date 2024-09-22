@@ -5,6 +5,8 @@
 #include <stdlib.h>
 #include <termios.h>
 
+
+#define CTRL_KEY(k) ((k)&0x1f) 
 //creating a global copy of the original terminal
 struct termios original_term; 
 
@@ -67,7 +69,7 @@ int main(){
     while (1) {
       if(read(STDIN_FILENO , &c,1)==-1 && errno!=EAGAIN)die("Read");
       event(&c); //send the input to the even handler function
-      if(c=='q')break;
+      if(c== CTRL_KEY('q'))break; //or we can just check and see if the acsii value of it is equal to 17 or not . but its cooler way.
   }
 	return 0;
 }
