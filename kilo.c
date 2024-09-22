@@ -72,23 +72,64 @@ char ReadKey(){
   return c;
 }
 
+int mode=0 ; //0-> normal mode     1->insert mode
+void ChangeMode(){
+  if(mode==0){
+    mode =1;
+   }
+  else{
+    mode =0 ;
+  }
+}
+
+
+
+
 void ProcessKey(){
   char c=ReadKey();
 
   switch (c) {
     case CTRL_KEY('q') :
+      system("clear");
       exit(0);
       break;
+    case 27:
+      ChangeMode();
+      break;
+    case 'k': 
+      if(mode==0)write(STDOUT_FILENO, "\x1b[A" ,3);
+      break;
+    case 'j':
+      if(mode==0)write(STDOUT_FILENO, "\x1b[B" ,3 );
+      break;
+    case 'l' :
+    if(mode==0)write(STDOUT_FILENO , "\x1b[C" , 3);
+      break;
+    case 'h':
+      if(mode==0)write(STDOUT_FILENO , "\x1b[D" , 3);
+    break;
+
   }
 }
+
+
+
+void RefreshScreen(){
+
+  write(STDOUT_FILENO, "\x1b[2J", 4);
+}
+
+
+
 int main(){
   tcgetattr(STDIN_FILENO,&original_term);
   original_term.c_lflag &= ~(ICANON); // ill move it soon
   char c;
-  int po;
+
 	enable_raw_mode();
     while (1) {
-    ProcessKey(); 
+      RefreshScreen();
+      ProcessKey(); 
   }
 	return 0;
 }
