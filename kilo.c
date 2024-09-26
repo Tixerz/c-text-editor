@@ -14,6 +14,9 @@ struct termios original_term;
 //error handling function
 
 void die(char* s){
+  
+  write(STDOUT_FILENO, "\x1b[2J", 4);
+  write(STDOUT_FILENO , "\x1b[H" , 3);
   perror(s);
   exit(1);
 }
@@ -46,21 +49,14 @@ void enable_raw_mode(){
   raw.c_iflag &= ~(ICRNL);
 
   //turning of all output processing (/r/n). 
-  raw.c_oflag &= ~(OPOST);
+  //raw.c_oflag &= ~(OPOST);
 
   raw.c_cc[VMIN] = 0;
   raw.c_cc[VTIME] = 1;
   if(tcsetattr(STDIN_FILENO,TCSANOW,&raw)==-1)die("enable_raw_mode function failed to set the terminal attributes.");
 
 }
-void event(char* ch){
-  if(iscntrl(*ch)){ //check and see if the character is a control character (a control character is a nonprintable character).
-    printf("%d\r\n" , *ch);}
-  else{
-    printf("%d:%s\r\n" , *ch ,ch);
-  }
 
-}
 //main functions
 
 char ReadKey(){
@@ -72,16 +68,18 @@ char ReadKey(){
   return c;
 }
 
-int mode=0 ; //0-> normal mode     1->insert mode
-void ChangeMode(){
-  if(mode==0){
-    mode =1;
-   }
-  else{
-    mode =0 ;
+void draw_lines(){
+  for(int i=0;i<24;i++){
+    write(STDOUT_FILENO,"~\r\n" ,3);
   }
 }
+void RefreshScreen(){
 
+  write(STDOUT_FILENO, "\x1b[2J", 4);
+  write(STDOUT_FILENO , "\x1b[H" , 3);
+  draw_lines();
+  write(STDOUT_FILENO , "\x1b[H" , 3);
+}
 
 
 
@@ -90,33 +88,13 @@ void ProcessKey(){
 
   switch (c) {
     case CTRL_KEY('q') :
-      system("clear");
+      write(STDOUT_FILENO , "\x1b[2J" ,4);
+      write(STDOUT_FILENO , "\x1b[H" , 3) ;
       exit(0);
-      break;
-    case 27:
-      ChangeMode();
-      break;
-    case 'k': 
-      if(mode==0)write(STDOUT_FILENO, "\x1b[A" ,3);
-      break;
-    case 'j':
-      if(mode==0)write(STDOUT_FILENO, "\x1b[B" ,3 );
-      break;
-    case 'l' :
-    if(mode==0)write(STDOUT_FILENO , "\x1b[C" , 3);
-      break;
-    case 'h':
-      if(mode==0)write(STDOUT_FILENO , "\x1b[D" , 3);
-    break;
 
+      break;
+    
   }
-}
-
-
-
-void RefreshScreen(){
-
-  write(STDOUT_FILENO, "\x1b[2J", 4);
 }
 
 
