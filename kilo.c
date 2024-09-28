@@ -4,11 +4,19 @@
 #include <unistd.h>
 #include <stdlib.h>
 #include <termios.h>
-
-
+#include <sys/ioctl.h>
 #define CTRL_KEY(k) ((k)&0x1f) 
-//creating a global copy of the original terminal
-struct termios original_term; 
+
+
+
+struct editorConfig{
+  struct termios original_term;
+  int EditorRows;
+  int EditorCols;
+};
+struct editorConfig E;
+
+
 
 
 //error handling function
@@ -23,11 +31,12 @@ void die(char* s){
 
 
 void disable_raw_mode(){
-  if(tcsetattr(STDIN_FILENO , TCSANOW , &original_term)==-1)die("disable_raw_mode function failed to get the terminal attributes.");
+  if(tcsetattr(STDIN_FILENO , TCSANOW , &E.original_term)==-1)die("disable_raw_mode function failed to get the terminal attributes.");
 }
 
 void enable_raw_mode(){
-  //once we enable it we want to disable it at the end of the program . so we register the disable function here
+//once we enable it we want to disable it at the end of the program . so we register the disable function here
+  tcgetattr(STDIN_FILENO,&E.original_term);
   atexit(disable_raw_mode);
   
   //making another termios structure to set anything we want to it
@@ -59,6 +68,19 @@ void enable_raw_mode(){
 
 //main functions
 
+int getWindowsSize(int* rows , int*cols){
+  struct winsize ws;
+  if(ioctl(STDOUT_FILENO , TIOCGWINSZ , &ws)==-1){return -1;}
+  else{
+    *rows = ws.ws_row;
+    *cols = ws.ws_col;
+    return 0;
+  }
+}
+void initEditor(){
+  if(getWindowsSize(&E.EditorRows ,&E.EditorCols)==-1)die("getWindowsSize");
+}
+
 char ReadKey(){
   char c;
   int ret;
@@ -67,11 +89,12 @@ char ReadKey(){
   } 
   return c;
 }
-
 void draw_lines(){
-  for(int i=0;i<24;i++){
+  for(int i=0;i<E.EditorRows;i++){
+    
     write(STDOUT_FILENO,"~\r\n" ,3);
   }
+  write(STDOUT_FILENO , "~",1);// its fo the last line of the editor
 }
 void RefreshScreen(){
 
@@ -100,11 +123,11 @@ void ProcessKey(){
 
 
 int main(){
-  tcgetattr(STDIN_FILENO,&original_term);
-  original_term.c_lflag &= ~(ICANON); // ill move it soon
   char c;
 
 	enable_raw_mode();
+  initEditor();
+
     while (1) {
       RefreshScreen();
       ProcessKey(); 
