@@ -16,13 +16,13 @@
 
 int main(){
   char c;
-
 	enable_raw_mode();
-  initEditor();
+ 	initEditor();
 
-    while (1) {
-      RefreshScreen();
-      ProcessKey(); 
+	while (1) {
+     		 RefreshScreen();
+      		ProcessKey(); 
   }
 	return 0;
+	
 }
