@@ -10,18 +10,18 @@
 #define CTRL_KEY(k) ((k)&0x1f) 
 
 #include "Editor_config_func.h"
-#include "Window_Config.h"
 #include "Key_Processing.h"
-//main functions
 
 int main(){
   char c;
-	enable_raw_mode();
- 	initEditor();
+	enable_raw_mode(); //disables flags and some terminal translations
+ 	initEditor(); //gets windows size 
 
 	while (1) {
-     		 RefreshScreen();
-      		ProcessKey(); 
+//    RefreshScreen(); //display the buffer each time
+    ProcessKey(); 
+  
+
   }
 	return 0;
 	
