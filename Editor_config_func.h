@@ -35,7 +35,7 @@ void enable_raw_mode(){
   
   //making another termios structure to set anything we want to it
   struct termios raw;
-  tcgetattr(STDIN_FILENO , &raw)  //disable echo and canonical mode
+  tcgetattr(STDIN_FILENO , &raw);  //disable echo and canonical mode
   raw.c_lflag &= ~(ECHO|ICANON);
 
   //disable CTRL-Z and CTRL-C signals

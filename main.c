@@ -9,7 +9,7 @@
 
 #define CTRL_KEY(k) ((k)&0x1f) 
 
-#include "Editor_config_func.h"
+//#include "Editor_config_func.h"
 #include "Key_Processing.h"
 
 int main(){
@@ -18,7 +18,7 @@ int main(){
  	initEditor(); //gets windows size 
 
 	while (1) {
-//    RefreshScreen(); //display the buffer each time
+    RefreshScreen(); //display the buffer each time
     ProcessKey(); 
   
 
