@@ -78,11 +78,12 @@ int SetCursorPos(int row  , int col){
 
 
 void draw_lines(){
-  for(int i=0;i<E.EditorRows;i++){
-    
-    write(STDOUT_FILENO,"~\r\n" ,3);
+  FILE* file_ptr;
+  file_ptr = fopen("./Key_Processing.h" , "r");
+  char line_buff[100];
+  while(fgets(line_buff , 100 , file_ptr)){
+    printf("%s" , line_buff);
   }
-  write(STDOUT_FILENO , "~",1);// its fo the last line of the editor
   //int m = getCursorPosition();
 }
 
