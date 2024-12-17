@@ -12,8 +12,16 @@ char ReadKey(){
   return c;
 }
 
-void ProcessKey(){
-  char c=ReadKey();
+int getWindowsSize(int* start , int* end);
+
+void ProcessKey(int* start , int* end){
+    int wrow;
+    int wcol;
+    int temp3;
+
+    temp3 = getWindowsSize(&wrow , &wcol);
+    
+    char c=ReadKey();
 
   switch (c) {
     case CTRL_KEY('q') :
@@ -23,13 +31,23 @@ void ProcessKey(){
 	
       break;
     case 'k':
-      E.cursor_row +=1;
+      if(E.cursor_row == wrow ){
+        *start +=1;
+        *end +=1;
+      }else{
+        E.cursor_row+=1;
+      }
       break;
     case 'l':
       E.cursor_col+=1;
       break;
     case 'j':
-      E.cursor_row-=1;
+      if(E.cursor_row == 0){
+          *start -= 1; 
+          *end -=1;
+      }else{
+        E.cursor_row-=1;
+      }
       break;
     case 'h':
       E.cursor_col-=1;
@@ -67,7 +85,7 @@ int SetCursorPos(int row  , int col){
 }
 
 
-int getWindowsSize(int* rows , int*cols){
+int getWindowsSize(int* rows , int* cols){
   struct winsize ws;
   if(ioctl(STDOUT_FILENO , TIOCGWINSZ , &ws)==-1){return -1;}
   else{
@@ -77,23 +95,25 @@ int getWindowsSize(int* rows , int*cols){
   }
 }
 
-
-void draw_lines(char ** File , int size){;
-
-
-   for(int i = 0 ; i<size;i++){
-       printf("%s", File[i]);
-   }
+void screen_buff_print(int start , int end , char** File){
+    for(int i=start ; i <=end ; i++){
+        printf("%s" , File[i]);
+    }
+}
+void draw_lines(char ** File , int start , int end  ){;
+    screen_buff_print(start , end , File);
   //int m = getCursorPosition();
 }
 
 
-void RefreshScreen(char ** File , int size_of_lines){
-
+void RefreshScreen(char ** File , int start , int end ){
   write(STDOUT_FILENO, "\x1b[2J", 4); // clearing the screen
   write(STDOUT_FILENO , "\x1b[H" , 3); //repositioning the cursor and making it ready for drawing lines
-  draw_lines( File , size_of_lines);
+  draw_lines( File , start , end  );
+  //screen_buff_print(start , end , File);
+    
   SetCursorPos(E.cursor_row , E.cursor_col); // repositioning the cursor after drawing lines
+
 }
 
 

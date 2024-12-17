@@ -32,5 +32,6 @@ char** pull_data(char* path , int * size){
         }
     fclose(pFile);
     return main_buffer;
+
 }
 
