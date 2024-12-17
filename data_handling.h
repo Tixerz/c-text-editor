@@ -1,9 +1,6 @@
 #include <stdio.h>
 #include <stdlib.h>
-struct File {
-    char**pFile;
-    int size;
-};
+
 int count(char* str1 ){
     int num = 0 ; 
     while(str1[num]!= '\0'){
@@ -18,7 +15,8 @@ void write_data(char** main , char* buf  , int line ){
         main[line][i] = buf[i];
     }
 }
-char** pull_data(char* path){
+char** pull_data(char* path , int * size){
+    *size = 0;
     char** main_buffer =(char**) malloc(sizeof(char*));
     char buffer[300];
     int times = 1; 
@@ -27,6 +25,7 @@ char** pull_data(char* path){
         while(fgets(buffer , 300 ,pFile )!=NULL){
             main_buffer[times -1 ] = (char*)malloc(sizeof(char*));
             write_data(main_buffer , buffer , times-1);
+           *size+=1;
            // printf("%s\n------------------\n" ,main_buffer[times-1]);
             times++;
             main_buffer = realloc(main_buffer , times*sizeof(char*));

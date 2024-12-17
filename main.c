@@ -22,9 +22,10 @@ int main(int argc , char* argv[]){
     // things we have to do in the main loop : 
     // 1. read data and send it to refresh screen function 
     // 2. process key
-    char** File = pull_data(argv[1]);
+    int size  = 0; 
+    char** File = pull_data(argv[1] , &size);
     while (1) {
-    RefreshScreen(File); //display the buffer each time
+    RefreshScreen(File , size); //display the buffer each time
     ProcessKey(); 
   
 

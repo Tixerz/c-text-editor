@@ -78,22 +78,21 @@ int getWindowsSize(int* rows , int*cols){
 }
 
 
-void draw_lines(char ** File){;
+void draw_lines(char ** File , int size){;
 
 
-
-   for(int i = 0 ; i<3;i++){
+   for(int i = 0 ; i<size;i++){
        printf("%s", File[i]);
    }
   //int m = getCursorPosition();
 }
 
 
-void RefreshScreen(char ** File){
+void RefreshScreen(char ** File , int size_of_lines){
 
   write(STDOUT_FILENO, "\x1b[2J", 4); // clearing the screen
   write(STDOUT_FILENO , "\x1b[H" , 3); //repositioning the cursor and making it ready for drawing lines
-  draw_lines( File);
+  draw_lines( File , size_of_lines);
   SetCursorPos(E.cursor_row , E.cursor_col); // repositioning the cursor after drawing lines
 }
 
