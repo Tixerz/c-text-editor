@@ -1,6 +1,5 @@
 #include "Editor_config_func.h"
 
-
 int getCursorPosition();
 
 
@@ -53,15 +52,7 @@ int getCursorPosition(int* c_row , int* c_col) {
   return -1;
 }
 
-int getWindowsSize(int* rows , int*cols){
-  struct winsize ws;
-  if(ioctl(STDOUT_FILENO , TIOCGWINSZ , &ws)==-1){return -1;}
-  else{
-    *rows = ws.ws_row;
-    *cols = ws.ws_col;
-    return 0;
-  }
-}
+
 int SetCursorPos(int row  , int col){
   E.cursor_row=row;
   E.cursor_col = col;
@@ -76,26 +67,33 @@ int SetCursorPos(int row  , int col){
 }
 
 
-
-void draw_lines(){
-  FILE* file_ptr;
-  file_ptr = fopen("./Key_Processing.h" , "r");
-  char line_buff[100];
-  while(fgets(line_buff , 100 , file_ptr)){
-    printf("%s" , line_buff);
+int getWindowsSize(int* rows , int*cols){
+  struct winsize ws;
+  if(ioctl(STDOUT_FILENO , TIOCGWINSZ , &ws)==-1){return -1;}
+  else{
+    *rows = ws.ws_row;
+    *cols = ws.ws_col;
+    return 0;
   }
+}
+
+
+void draw_lines(char ** File){;
+
+
+
+   for(int i = 0 ; i<3;i++){
+       printf("%s", File[i]);
+   }
   //int m = getCursorPosition();
 }
 
 
-
-
-
-void RefreshScreen(){
+void RefreshScreen(char ** File){
 
   write(STDOUT_FILENO, "\x1b[2J", 4); // clearing the screen
   write(STDOUT_FILENO , "\x1b[H" , 3); //repositioning the cursor and making it ready for drawing lines
-  draw_lines();
+  draw_lines( File);
   SetCursorPos(E.cursor_row , E.cursor_col); // repositioning the cursor after drawing lines
 }
 

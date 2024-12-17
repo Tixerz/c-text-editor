@@ -11,14 +11,20 @@
 
 //#include "Editor_config_func.h"
 #include "Key_Processing.h"
+#include "data_handling.h"
 
-int main(){
+int main(int argc , char* argv[]){
   char c;
 	enable_raw_mode(); //disables flags and some terminal translations
  	initEditor(); //gets windows size 
-
-	while (1) {
-    RefreshScreen(); //display the buffer each time
+    
+    // main loop 
+    // things we have to do in the main loop : 
+    // 1. read data and send it to refresh screen function 
+    // 2. process key
+    char** File = pull_data(argv[1]);
+    while (1) {
+    RefreshScreen(File); //display the buffer each time
     ProcessKey(); 
   
 
