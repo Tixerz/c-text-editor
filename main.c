@@ -16,25 +16,15 @@
 int main(int argc , char* argv[]){
   char c;
 	enable_raw_mode(); //disables flags and some terminal translations
- 	initEditor(); //gets windows size 
-    
-    // main loop 
-    // things we have to do in the main loop : 
-    // 1. read data and send it to refresh screen function 
-    // 2. process key
-     
-
-
-
-
+ 	initEditor();
+    //gets windows size
     int start = 0 ; 
     int end = 52;
-    
     int size;
     char** File = pull_data(argv[1] , &size);
     while (1) {
     RefreshScreen(File , start , end ); //display the buffer each time
-    ProcessKey(&start ,&end); 
+    ProcessKey(&start ,&end , size); 
   
 
   }

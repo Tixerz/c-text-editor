@@ -23,7 +23,7 @@ char** pull_data(char* path , int * size){
     
     FILE* pFile = fopen(path , "r");
         while(fgets(buffer , 300 ,pFile )!=NULL){
-            main_buffer[times -1 ] = (char*)malloc(sizeof(char*));
+            main_buffer[times -1 ] = (char*)malloc(300);
             write_data(main_buffer , buffer , times-1);
            *size+=1;
            // printf("%s\n------------------\n" ,main_buffer[times-1]);

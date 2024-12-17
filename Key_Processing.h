@@ -14,7 +14,7 @@ char ReadKey(){
 
 int getWindowsSize(int* start , int* end);
 
-void ProcessKey(int* start , int* end){
+void ProcessKey(int* start , int* end , int file_size){
     int wrow;
     int wcol;
     int temp3;
@@ -31,10 +31,10 @@ void ProcessKey(int* start , int* end){
 	
       break;
     case 'k':
-      if(E.cursor_row == wrow ){
-        *start +=1;
-        *end +=1;
-      }else{
+      if(E.cursor_row == wrow-1 ){
+       if(*start+1 <file_size-wrow ) *start +=1;
+        if(*end+1 < file_size)*end +=1;
+      }else {
         E.cursor_row+=1;
       }
       break;
@@ -42,10 +42,10 @@ void ProcessKey(int* start , int* end){
       E.cursor_col+=1;
       break;
     case 'j':
-      if(E.cursor_row == 0){
-          *start -= 1; 
-          *end -=1;
-      }else{
+      if(E.cursor_row == 1){
+          if(*start-1 >1)*start -= 1; 
+         if(*end-1 < wrow) *end -=1;
+      }else if(E.cursor_row-1 >0){
         E.cursor_row-=1;
       }
       break;
